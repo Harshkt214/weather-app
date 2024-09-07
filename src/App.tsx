@@ -6,7 +6,9 @@ import {
    TableHeader,
    TableRow,
 } from "@/components/ui/table";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Loader from "./components/loader";
 type Root = {
    total_count: number;
    results: Result[];
@@ -43,14 +45,19 @@ interface Coordinates {
 function App() {
    const [weatherData, setWeatherData] = useState<Result[] | null>(null);
 
+   const [fetching, setFetching] = useState(false);
    const [offset, setOffset] = useState(0);
    useEffect(() => {
       async function fetchData(offset = 0) {
+         // prevent multiple calls
+         if (fetching) return;
          try {
+            setFetching(true);
             const response = await fetch(
                `https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?order_by=cou_name_en%2Cascii_name&limit=20&offset=${offset}`
             );
 
+            setFetching(false);
             if (!response.ok) {
                throw new Error(
                   `Network response was not ok (status ${response.status})`
@@ -62,8 +69,12 @@ function App() {
                c ? [...c, ...data.results] : [...data.results]
             );
          } catch (error) {
+            setFetching(false);
+            setWeatherData((c) => (c ? [...c] : c));
+            setTimeout(() => {
+               fetchData(offset);
+            }, 5000);
             console.error("Error fetching data:", error);
-            setWeatherData(null);
          }
       }
 
@@ -103,14 +114,30 @@ function App() {
                   {weatherData?.map((data) => (
                      <TableRow key={data.geoname_id}>
                         <TableCell className="font-medium">
-                           {data.ascii_name}
+                           <Link
+                              to={
+                                 data.coordinates.lat +
+                                 "-" +
+                                 data.coordinates.lon
+                              }
+                           >
+                              {data.ascii_name}
+                           </Link>
                         </TableCell>
+
                         <TableCell>{data.cou_name_en}</TableCell>
                         <TableCell>{data.timezone}</TableCell>
                      </TableRow>
                   ))}
                </TableBody>
             </Table>
+            {fetching ? (
+               <div className="mx-auto w-max mt-4">
+                  <Loader />
+               </div>
+            ) : (
+               ""
+            )}
          </div>
       </>
    );
