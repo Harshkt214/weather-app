@@ -78,7 +78,9 @@ function App() {
          }
       }
 
-      fetchData();
+      if (!fetching) {
+         fetchData(offset);
+      }
       const handleScroll = () => {
          if (
             window.innerHeight + document.documentElement.scrollTop !==

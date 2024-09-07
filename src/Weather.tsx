@@ -17,7 +17,7 @@ import {
 } from "./components/icon";
 import Loader from "./components/loader";
 import { formatDateTime } from "./helpers/functions/formateDate";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export interface Root {
    coord: Coord;
@@ -75,24 +75,24 @@ export interface Sys {
 }
 
 type WeatherIcon = React.ReactElement;
-const images = {
-   "01d": "/images/rainy.jpg",
-   "01n": <Moon02Icon className="size-20 text-white" />,
-   "02d": <SunCloud02Icon className="size-20 text-white" />,
-   "02n": <MoonCloudIcon className="size-20 text-white" />,
-   "03d": <CloudIcon className="size-20 text-white" />,
-   "03n": <CloudIcon className="size-20 text-white" />,
-   "09d": <CloudAngledRainIcon className="size-20 text-white" />,
-   "09n": <CloudAngledRainIcon className="size-20 text-white" />,
-   "10d": <SunCloudAngledRain02Icon className="size-20 text-white" />,
-   "10n": <MoonCloudAngledRainIcon className="size-20 text-white" />,
-   "11d": <CloudAngledZapIcon className="size-20 text-white" />,
-   "11n": <CloudAngledZapIcon className="size-20 text-white" />,
-   "13d": <SnowIcon className="size-20 text-white" />,
-   "13n": <SnowIcon className="size-20 text-white" />,
-   "50d": <SnowIcon className="size-20 text-white" />,
-   "50n": <SnowIcon className="size-20 text-white" />,
-};
+// const images = {
+//    "01d": "/images/rainy.jpg",
+//    "01n": <Moon02Icon className="size-20 text-white" />,
+//    "02d": <SunCloud02Icon className="size-20 text-white" />,
+//    "02n": <MoonCloudIcon className="size-20 text-white" />,
+//    "03d": <CloudIcon className="size-20 text-white" />,
+//    "03n": <CloudIcon className="size-20 text-white" />,
+//    "09d": <CloudAngledRainIcon className="size-20 text-white" />,
+//    "09n": <CloudAngledRainIcon className="size-20 text-white" />,
+//    "10d": <SunCloudAngledRain02Icon className="size-20 text-white" />,
+//    "10n": <MoonCloudAngledRainIcon className="size-20 text-white" />,
+//    "11d": <CloudAngledZapIcon className="size-20 text-white" />,
+//    "11n": <CloudAngledZapIcon className="size-20 text-white" />,
+//    "13d": <SnowIcon className="size-20 text-white" />,
+//    "13n": <SnowIcon className="size-20 text-white" />,
+//    "50d": <SnowIcon className="size-20 text-white" />,
+//    "50n": <SnowIcon className="size-20 text-white" />,
+// };
 const icons: Record<string, WeatherIcon> = {
    "01d": <Sun03Icon className="size-20 text-white" />,
    "01n": <Moon02Icon className="size-20 text-white" />,
