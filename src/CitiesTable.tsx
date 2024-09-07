@@ -9,42 +9,10 @@ import {
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Loader from "./components/loader";
-type Root = {
-   total_count: number;
-   results: Result[];
-};
+import { Cities, Result } from "./helpers/types";
 
-interface Result {
-   geoname_id: string;
-   name: string;
-   ascii_name: string;
-   alternate_names: string[];
-   feature_class: string;
-   feature_code: string;
-   country_code: string;
-   cou_name_en: string;
-   country_code_2: any;
-   admin1_code: string;
-   admin2_code: string;
-   admin3_code: any;
-   admin4_code: any;
-   population: number;
-   elevation: any;
-   dem: number;
-   timezone: string;
-   modification_date: string;
-   label_en: string;
-   coordinates: Coordinates;
-}
-
-interface Coordinates {
-   lon: number;
-   lat: number;
-}
-
-function App() {
-   const [weatherData, setWeatherData] = useState<Result[] | null>(null);
-
+function CitiesTable() {
+   const [citiesData, setCitiesData] = useState<Result[] | null>(null);
    const [fetching, setFetching] = useState(false);
    const [offset, setOffset] = useState(0);
    useEffect(() => {
@@ -54,7 +22,7 @@ function App() {
          try {
             setFetching(true);
             const response = await fetch(
-               `https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?order_by=cou_name_en%2Cascii_name&limit=20&offset=${offset}`
+               `https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?order_by=cou_name_en%2Cascii_name&limit=30&offset=${offset}`
             );
 
             setFetching(false);
@@ -64,13 +32,13 @@ function App() {
                );
             }
 
-            const data = (await response.json()) as Root;
-            setWeatherData((c) =>
+            const data = (await response.json()) as Cities;
+            setCitiesData((c) =>
                c ? [...c, ...data.results] : [...data.results]
             );
          } catch (error) {
             setFetching(false);
-            setWeatherData((c) => (c ? [...c] : c));
+            setCitiesData((c) => (c ? [...c] : c));
             setTimeout(() => {
                fetchData(offset);
             }, 5000);
@@ -98,6 +66,17 @@ function App() {
       window.addEventListener("scroll", handleScroll);
       return () => window.removeEventListener("scroll", handleScroll);
    }, []);
+   // const estimateItemSize = (index: number): number => {
+   //    // This function estimates the height of each list item based on data
+   //    const city = citiesData[index];
+   //    // Logic to calculate height based on number of lines in city data
+   //    // (e.g., consider line breaks or number of properties)
+   //    return estimatedHeight;
+   //  };
+   //  const loadMoreItems = (page: number) => {
+   //    const newOffset = page * 30; // Adjust based on your limit
+   //    fetchData(newOffset);
+   //  };
    return (
       <>
          <h1 className="text-center font-bold text-3xl mb-5 mt-10">
@@ -113,7 +92,7 @@ function App() {
                   </TableRow>
                </TableHeader>
                <TableBody>
-                  {weatherData?.map((data) => (
+                  {citiesData?.map((data) => (
                      <TableRow key={data.geoname_id}>
                         <TableCell className="font-medium">
                            <Link
@@ -145,4 +124,4 @@ function App() {
    );
 }
 
-export default App;
+export default CitiesTable;

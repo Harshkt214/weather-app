@@ -18,61 +18,8 @@ import {
 import Loader from "./components/loader";
 import { formatDateTime } from "./helpers/functions/formateDate";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-export interface Root {
-   coord: Coord;
-   weather: Weather[];
-   base: string;
-   main: Main;
-   visibility: number;
-   wind: Wind;
-   clouds: Clouds;
-   dt: number;
-   sys: Sys;
-   timezone: number;
-   id: number;
-   name: string;
-   cod: number;
-}
-
-export interface Coord {
-   lon: number;
-   lat: number;
-}
-
-export interface Weather {
-   id: number;
-   main: string;
-   description: string;
-   icon: string;
-}
-
-export interface Main {
-   temp: number;
-   feels_like: number;
-   temp_min: number;
-   temp_max: number;
-   pressure: number;
-   humidity: number;
-   sea_level: number;
-   grnd_level: number;
-}
-
-export interface Wind {
-   speed: number;
-   deg: number;
-   gust: number;
-}
-
-export interface Clouds {
-   all: number;
-}
-
-export interface Sys {
-   country: string;
-   sunrise: number;
-   sunset: number;
-}
+import { useNavigate } from "react-router-dom";
+import { Root } from "./helpers/types";
 
 type WeatherIcon = React.ReactElement;
 // const images = {
@@ -114,28 +61,10 @@ const icons: Record<string, WeatherIcon> = {
    "50n": <SnowIcon className="size-20 text-white" />,
 };
 
-const handleClick = () => {
-   // Your event handling logic here
-   if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(success, error);
-   } else {
-      alert("Geolocation is not supported by this browser.");
-   }
-
-   function success(position: GeolocationPosition): void {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      const newUrl = `/${latitude}-${longitude}`;
-      window.location.href = newUrl;
-   }
-
-   function error(): void {
-      alert("Unable to retrieve your location.");
-   }
-};
-
 export default function Weather() {
    const { city } = useParams();
+   const navigate = useNavigate();
+
    const [latitude, longitude] = city?.split("-") || [];
 
    const [unit, setUnit] = useState<"celsius" | "fahrenheit">("celsius");
@@ -145,6 +74,25 @@ export default function Weather() {
 
    const [weatherData, setWeatherData] = useState<Root | null>(null);
    const [fetching, setFetching] = useState(false);
+
+   const handleClick = () => {
+      if (navigator.geolocation) {
+         navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+         alert("Geolocation is not supported by this browser.");
+      }
+
+      function success(position: GeolocationPosition): void {
+         const latitude = position.coords.latitude;
+         const longitude = position.coords.longitude;
+         const newUrl = `/${latitude}-${longitude}`;
+         navigate(newUrl);
+      }
+
+      function error(): void {
+         alert("Unable to retrieve your location.");
+      }
+   };
 
    useEffect(() => {
       async function fetchData() {
@@ -186,7 +134,7 @@ export default function Weather() {
          ) : (
             <main className="max-w-3xl sm:px-4 mx-auto">
                <div className="w-full shadow h-[100dvh] sm:h-max p-4 sm:p-14 sm:rounded-[2rem] sm:mt-10 bg-gradient-to-tr from-violet-500 to-purple-500">
-                  <div className="mb-14 flex items-center justify-between">
+                  <div className="mb-14 flex items-start pt-7 sm:pt-0 sm:flex-row sm:justify-between flex-col gap-5">
                      <div>
                         <div className="text-4xl tracking-wide mb-2 text-white">
                            {weatherData?.name}
